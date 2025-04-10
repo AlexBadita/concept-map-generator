@@ -1,0 +1,9 @@
+flask==2.2.5
+flask_cors
+spacy==2.1.0
+neuralcoref==4.0.0
+networkx==2.6.3
+urllib3==1.26.12
+PyMuPDF
+nltk
+scikit-learn
