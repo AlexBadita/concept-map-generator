@@ -15,14 +15,14 @@
       </ul>
     </li>
     <li>
+      <a href="#">Features</a>
+    </li>
+    <li>
       <a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
       </ul>
-    </li>
-    <li>
-      <a href="#usage">Usage</a>
     </li>
     <li>
       <a href="#references">References</a>
@@ -51,6 +51,8 @@ The backend is built with the following technologies:
 * [![spaCy][spaCy-badge]][spaCy-url]
 * [![NeuralCoref][NeuralCoref-badge]][NeuralCoref-url]
 * [![NetworkX][NetworkX-badge]][NetworkX-url]
+* [![nltk][nltk-badge]][nltk-url]
+* [![scikit-learn][scikit-learn-badge]][scikit-learn-url]
 
 The backend uses **Flask** to serve APIs for processing text input and PDF files. It performs NLP tasks like tokenization, dependency parsing, and coreference resolution using **spaCy** and **NeuralCoref**. It also constructs a graph of concept relationships using **NetworkX**.
 
@@ -70,17 +72,87 @@ The frontend is built using **React**, a JavaScript library for building user in
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- GETTING STARTED -->
-## Getting Started
+<!-- FEATURES -->
+## Features
 
-<!-- TODO: Add setup instructions -->
+- 📄 Upload PDF or input raw text
+- 🧠 NLP pipeline with coreference resolution
+- 🧭 Extracts and visualizes concept relationships
+- 🌐 Interactive concept map with React Flow
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- USAGE -->
-## Usage
+<!-- GETTING STARTED -->
+## Getting Started
 
-<!-- TODO: Add usage examples -->
+This section will help you set up the project locally for development and testing purposes. Follow the steps for both the backend (Python/Flask) and the frontend (React).
+
+<!-- PREREQUISITES -->
+### Prerequisites
+
+Before you begin, make sure you have the following:
+
+#### Backend
+- Python 3.7.0 (or any other version of Python 3)
+- pip (Python package installer)
+
+#### Frontend
+- Node.js
+- npm or yarn
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- Installation -->
+### Installation
+
+#### 1. Clone the Repository
+```bash
+git clone https://github.com/AlexBadita/concept-map-generator.git
+cd concept-map-generator
+```
+
+#### 2. Install the Backend Dependencies
+
+Navigate to the backend folder from the terminal:
+```bash
+cd flask-backend
+```
+
+Run the script to create a local virtual environment (because the app requires Python 3.7.0 and some specific versions for some dependencies). <br/>
+The full list of required dependencies can be found in *requirements.txt*. <br/>
+**Before running the script make sure you know which shell you’re using** (zsh, bash, etc.). Check the *init_venv.sh* before running it.
+```bash
+ ./init_venv.sh
+```
+
+#### 3. Run the Backend Server
+
+Optional: If your local environment is not activated in your terminal, run:
+```bash
+source .venv/bin/activate
+```
+
+Once your virtual environment is activated, you can start the flask server:
+```bash
+python3 backend.py
+```
+
+#### 4. Install the Frontend Dependencies
+
+In a new terminal, navigate to the frontend folder:
+```bash
+cd concept-map
+```
+
+Then, install the dependencies:
+```bash
+npm install
+```
+
+#### 5. Start the Client Application
+```bash
+npm start
+```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -99,7 +171,7 @@ The frontend is built using **React**, a JavaScript library for building user in
    *Author: Mario Stoff, 2021*
    [Link to paper](https://www.cg.tuwien.ac.at/research/publications/2021/stoff-concepMap-2021/stoff-concepMap-2021-thesis.pdf)
 
-4. **AUTOMATIC CONSTRUCTION OF CONCEPT MAPS FROM TEXTS**
+4. **Automatic Construction Of Concept Maps From Texts**
    *Author: Camila Zacché de Aguiar, Amal Zouaq, Davidson Cury, 2016*
    [Link to paper](https://www.researchgate.net/publication/311424610_AUTOMATIC_CONSTRUCTION_OF_CONCEPT_MAPS_FROM_TEXTS)
 
@@ -107,7 +179,7 @@ The frontend is built using **React**, a JavaScript library for building user in
    *Author: Alejandro Valerio, David B. Leake, 2012*
    [Link to paper](https://www.researchgate.net/publication/320809098_Using_Automatically_Generated_Concept_Maps_for_Document_Understanding_a_Human_Subjects_Experiment)
 
-6. **AUTOMATIC CONSTRUCTION OF CONCEPT MAPS FROM TEXTS**
+6. **Associating Documents To Concept Maps In Ccontext**
    *Author: Alejandro Valerio, David B. Leake, 2008*
    [Link to paper](https://www.researchgate.net/profile/Alejandro-Valerio/publication/255549752_ASSOCIATING_DOCUMENTS_TO_CONCEPT_MAPS_IN_CONTEXT/links/02e7e5350173920a2d000000/ASSOCIATING-DOCUMENTS-TO-CONCEPT-MAPS-IN-CONTEXT.pdf)
 
@@ -140,3 +212,9 @@ The frontend is built using **React**, a JavaScript library for building user in
 
 [React-Flow-badge]: https://img.shields.io/badge/React%20Flow-00D1B2?style=for-the-badge&logo=react&logoColor=white
 [React-Flow-url]: https://reactflow.dev/
+
+[nltk-badge]: https://img.shields.io/badge/nltk-85C1E9?style=for-the-badge
+[nltk-url]: https://www.nltk.org/
+
+[scikit-learn-badge]: https://img.shields.io/badge/scikit--learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white
+[scikit-learn-url]: https://scikit-learn.org/
