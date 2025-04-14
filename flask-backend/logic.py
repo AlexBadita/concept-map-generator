@@ -1,30 +1,64 @@
+# For handling punctuation
 import string
+# For natural language processing
 import spacy
+# For pattern matching in text
 from spacy.matcher import Matcher
+# For coreference resolution
 import neuralcoref
 
+# Sample input text for testing
 input_text = "Information used in existing ontology matching solutions are usually grouped into four categories: lexical information, structural information, semantic information, and external information, respectively. By summarizing and analyzing the approaches for utilizing the same kind of information, this paper nds that lexical information is mainly analyzed based on text and dictionary similarity. Similarly, structural information and semantic information are mainly analyzed based on graph structure and reasoner, respectively. The approaches for aggregating information analysis results are discussed. Challenges in the analysis of various types of information for existing ontology matching solutions are also described, and insights into directions for future research are provided."
-# load model
+
+# Load the spacy language model
 nlp = spacy.load('en_core_web_sm')
-# add coreference to pipeline
+
+# Add neuralcoref to the spacy pipeline for coreference resolution
 neuralcoref.add_to_pipe(nlp)
 
 def coreference_resolution(text):
-    # apply the pipeline
+    """
+    Resolve coreferences in the input text.
+
+    Args:
+        text (str): The input text.
+
+    Returns:
+        str: The text with coreferences resolved.
+    """
+    # Apply the NLP pipeline
     doc = nlp(text)
-    # replacing all expressoms with the main entity's name
+    # Replace references with main entities
     resolved_text = doc._.coref_resolved
     return resolved_text
 
 def remove_punctuation(tokens):
-    # the list of punctuation elements
+    """
+    Remove punctuation from a list of tokens.
+
+    Args:
+        tokens (list): List of tokens.
+
+    Returns:
+        list: List of tokens without punctuation.
+    """
+    # Set of punctuation characters
     punctuation = set(string.punctuation)
     return [token for token in tokens if token not in punctuation]
 
 def extract_tokens(text):
-    # apply the pipeline
+    """
+    Extract tokens from the input text, grouped by sentences.
+
+    Args:
+        text (str): The input text.
+
+    Returns:
+        list: A list of sentences, each containing a list of tokens.
+    """
+    # Apply the NLP pipeline
     doc = nlp(text)
-    # create a list of sentences, each containing a list of tokens
+    
     tokens = []
     for sentence in doc.sents:
         sentence_tokens = [token.text.lower() for token in sentence]
@@ -33,9 +67,18 @@ def extract_tokens(text):
     return tokens
 
 def tag_part_of_speach(text):
-    # apply the pipeline
+    """
+    Tag tokens in the text with their part-of-speech (POS).
+
+    Args:
+        text (str): The input text.
+
+    Returns:
+        list: A list of sentences, each containing tokens with their POS tags.
+    """
+    # Apply the NLP pipeline
     doc = nlp(text)
-    # extract tokens and their POS tags
+   
     pos_tags = []
     for sentence in doc.sents:
         sentence_pos_tags = [(token.text.lower(), token.pos_) for token in sentence if token.text not in string.punctuation]
@@ -43,9 +86,18 @@ def tag_part_of_speach(text):
     return pos_tags
 
 def extract_noun_phrases(text):
-    # apply the pipeline
+    """
+    Extract noun phrases from the input text.
+
+    Args:
+        text (str): The input text.
+
+    Returns:
+        list: A list of sentences, each containing noun phrases with their start and end indices.
+    """
+    # Apply the NLP pipeline
     doc = nlp(text)
-    # extract noun phrases
+    
     noun_phrases = []
     for sentence in doc.sents:
         sentence_noun_phrases = [(chunk.start, chunk.end, chunk.text.lower()) for chunk in sentence.noun_chunks]
@@ -53,11 +105,22 @@ def extract_noun_phrases(text):
     return noun_phrases
 
 def extract_verb_phrases(text):
-    # load the pipeline
+    """
+    Extract verb phrases from the input text using pattern matching.
+
+    Args:
+        text (str): The input text.
+
+    Returns:
+        list: A list of sentences, each containing verb phrases with their start and end indices.
+    """
+    # Apply the NLP pipeline
     doc = nlp(text)
-    # initialize the matcher with the vocab of the model
+    # Initialize the matcher
     matcher = Matcher(nlp.vocab)
-    # define the pattern <VERB>*<ADV>*<PART>*<VERB>+<PART>*
+
+    # Define the pattern for verb phrases 
+    # <VERB>*<ADV>*<PART>*<VERB>+<PART>*
     pattern = [
         {"POS": "VERB", "OP": "*"},  # Zero or more verbs
         {"POS": "ADV", "OP": "*"},   # Zero or more adverbs
@@ -66,14 +129,14 @@ def extract_verb_phrases(text):
         {"POS": "PART", "OP": "*"},  # Zero or more particles
         {"POS": "ADP", "OP": "*"},   # Zero or more prepositions
     ]
-    # add the pattern to the matcher
+    # Add the pattern to the matcher
     matcher.add("VerbPhrasePattern", None, pattern)
     
-    # Apply the matcher to the doc
+    # Apply the matcher to the document
     matches = matcher(doc)
     spans = [doc[start:end] for match_id, start, end in matches]
 
-    # Sort spans by start index and then by length (longer spans first)
+    # Filter overlapping spans
     spans = sorted(spans, key=lambda span: (span.start, -(span.end - span.start)))
     
     filtered_spans = []
@@ -94,6 +157,16 @@ def extract_verb_phrases(text):
     return verb_phrases
 
 def find_possible_relations(concepts, links):
+    """
+    Find possible relations between concepts based on links.
+
+    Args:
+        concepts (list): List of concepts grouped by sentences.
+        links (list): List of links grouped by sentences.
+
+    Returns:
+        list: A list of relations between concepts.
+    """
     relations = []
     for sentence_concepts, sentence_links in zip(concepts, links):
         sentence_relations = []
@@ -108,13 +181,23 @@ def find_possible_relations(concepts, links):
     return relations
 
 def find_concept_link_concept_pairs(text):
+    """
+    Extract concept-relation-concept pairs from the input text.
+
+    Args:
+        text (str): The input text.
+
+    Returns:
+        list: A list of tuples representing concept-relation-concept pairs.
+    """
     SUBJECTS = ["nsubj", "nsubjpass", "csubj", "csubjpass", "agent", "expl"]
     OBJECTS = ["dobj", "dative", "attr", "oprd"]
-    ADJECTIVES = ["acomp", "advcl", "advmod", "amod", "appos", "nn", "nmod", "ccomp", "complm",
-              "hmod", "infmod", "xcomp", "rcmod", "poss"," possessive"]
-    COMPOUNDS = ["compound"]
+    # ADJECTIVES = ["acomp", "advcl", "advmod", "amod", "appos", "nn", "nmod", "ccomp", "complm",
+    #           "hmod", "infmod", "xcomp", "rcmod", "poss"," possessive"]
+    # COMPOUNDS = ["compound"]
     PREPOSITIONS = ["prep"]
     
+    # Apply the NLP pipeline
     doc = nlp(text)
     noun_phrases = extract_noun_phrases(text)
     verb_phrases = extract_verb_phrases(text)
@@ -148,6 +231,7 @@ def find_concept_link_concept_pairs(text):
     return pairs
 
 if __name__ == '__main__':
+    # Test the coreference resolution and concept extraction
     resolved_text = coreference_resolution(input_text)
     for concept in find_concept_link_concept_pairs(resolved_text):
         print(concept)

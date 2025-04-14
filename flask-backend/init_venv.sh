@@ -20,7 +20,7 @@ source ~/.zshrc
 pyenv install 3.7.0
 
 # Set Python 3.7.0 as the global version (optional)
-# pyenv global 3.7.0
+pyenv global 3.7.0
 
 # Create and activate virtual environment
 echo "Creating and activating virtual environment..."
@@ -30,6 +30,9 @@ source .venv/bin/activate
 # Install dependencies from requirements.txt
 echo "Installing dependencies from requirements.txt..."
 pip install -r requirements.txt
+
+# Download the language model for spacy
+python3 -m spacy download en_core_web_sm
 
 # Instructions to deactivate
 echo "Virtual environment is set up and activated. Use 'deactivate' to exit."

@@ -1,7 +1,5 @@
 import { useCallback, useEffect } from "react";
 import ReactFlow, {
-  applyNodeChanges,
-  applyEdgeChanges,
   useNodesState,
   useEdgesState,
   addEdge,
@@ -13,15 +11,15 @@ const Flow = ({ graph }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
-  console.log("Flow", graph);
+  // console.log("Flow", graph);
   useEffect(() => {
-    if(graph){
+    if (graph) {
       setNodes(graph.nodes);
       setEdges(graph.edges);
-      console.log("Nodes: ", graph.nodes);
-      console.log("Edges: ", graph.edges);
+      // console.log("Nodes: ", graph.nodes);
+      // console.log("Edges: ", graph.edges);
     }
-  }, [graph]);
+  }, [graph, setNodes, setEdges]);
 
   const onConnect = useCallback(
     (connection) => setEdges((eds) => addEdge(connection, eds)),

@@ -18,13 +18,23 @@ const VisuallyHiddenInput = styled("input")({
 const TextArea = ({ handleGraph }) => {
   const [text, setText] = useState("");
   const [file, setFile] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (event) => {
     setText(event.target.value);
   };
 
   const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
+    const uploadedFile = event.target.files[0];
+    if (uploadedFile && uploadedFile.type !== "application/pdf") {
+      alert("Only PDF files are allowed.");
+      return;
+    }
+    if (uploadedFile && uploadedFile.size > 5 * 1024 * 1024) {
+      alert("File size must be less than 5 MB.");
+      return;
+    }
+    setFile(uploadedFile);
   };
 
   const setGraph = (g) => {
@@ -32,24 +42,51 @@ const TextArea = ({ handleGraph }) => {
   };
 
   const handleSubmit = async () => {
-    if (text) {
+    if (!text) {
+      alert("Please enter text");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // Prepare the form data
       const formData = new FormData();
       formData.append("text", text);
       if (file) {
         formData.append("file", file);
       }
+
+      // Send the request to the backend
       const response = await fetch("http://127.0.0.1:5000/send-data", {
         mode: "cors",
         method: "POST",
         body: formData,
       });
-      console.log(response);
+
+      // Check if the response is successful
+      if (!response.ok) {
+        const errorMessage = `Error: ${response.status} ${response.statusText}`;
+        alert(errorMessage);
+        return;
+      }
+
+      // Parse the response JSON
       const result = await response.json();
-      console.log("Recieved: ", result);
-      setFile(null);
-      setGraph(result);
-    } else {
-      alert("Please enter text");
+
+      // Extract the "graph" value from the response and pass it to setGraph
+      if (result.success && result.graph) {
+        setGraph(result.graph);
+      } else {
+        alert("Unexpected response format or missing graph data.");
+      }
+
+      // Clear the file input
+    } catch (error) {
+      // Handle any errors that occur during the fetch
+      console.error("Error submitting data:", error);
+      alert("An error occurred while submitting the data. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -95,8 +132,9 @@ const TextArea = ({ handleGraph }) => {
           color="primary"
           onClick={handleSubmit}
           sx={{ mt: 2 }}
+          disabled={isLoading}
         >
-          Submit
+          {isLoading ? "Submitting..." : "Submit"}
         </Button>
         <Button
           component="label"
